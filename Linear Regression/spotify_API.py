@@ -33,7 +33,7 @@ def get_token():
         print(f"Error getting token: {result.status_code} - {result.text}")
         return None
 
-def test_artist(artist_id):  # Coldplay's ID
+def get_artist(artist_id):  
     """Test if our token works by getting artist info"""
     global access_token
     if not access_token:
@@ -58,7 +58,6 @@ def test_artist(artist_id):  # Coldplay's ID
     else:
         print(f"Artist test failed: {result.status_code} - {result.text}")
         return None
-
 
 def search_playlists(query="pop"):
     """Search for playlists to get valid IDs"""
@@ -91,7 +90,7 @@ def search_playlists(query="pop"):
         print(f"Search failed: {result.status_code} - {result.text}")
         return None
 
-def get_playlist(playlist_id, market="VN"):
+def get_playlists(playlist_id, market="VN"):
     global access_token  # Use global access_token
     if not access_token:
         access_token = get_token()  # Get token if it's None
@@ -103,26 +102,37 @@ def get_playlist(playlist_id, market="VN"):
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
-        "User-Agent": "SpotifyAPI/1.0"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"
     }
     
-    print(f"Getting playlist: {url}")
-    print(f"Parameters: {params}")
     result = requests.get(url, headers=headers, params=params)
-    
-    print(f"Playlist request - Status: {result.status_code}")
-    print(f"Response headers: {dict(result.headers)}")
     
     if result.status_code == 200:
         return result.json()
     else:
-        print(f"Error getting playlist: {result.status_code} - {result.text}")
-        # Try to get more details about the error
-        try:
-            error_details = result.json()
-            print(f"Detailed error: {error_details}")
-        except:
-            print("Could not parse error response as JSON")
+        print(f"Error getting playlist tracks: {result.status_code} - {result.text}")
+        return None
+    
+def get_track(track_id):
+    global access_token
+    if not access_token:
+        access_token = get_token()
+    if not access_token:
+        return None
+
+    url = f"https://api.spotify.com/v1/tracks/{track_id}"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    
+    result = requests.get(url, headers=headers)
+    
+    if result.status_code == 200:
+        track_data = result.json()
+        return track_data
+    else:
+        print(f"Track test failed: {result.status_code} - {result.text}")
         return None
 
 if __name__ == "__main__":
@@ -132,8 +142,10 @@ if __name__ == "__main__":
                     #   "pop"
                       ]
     
+    # Get playlists id
     for each_query in search_list_VN:
         search_result = search_playlists(query=each_query)
+        
         playlist_id = []
         if search_result:
             playlists = search_result.get('playlists', {}).get('items', [])
@@ -147,4 +159,24 @@ if __name__ == "__main__":
             print(f"No valid playlist from search")
         else:
             print(playlist_id)
+    
+    # Get playlist info and get tracks from playlist
+    for p_id in playlist_id:
+        print(f"Getting tracks for playlist ID: {p_id}")
+        playlist_json = get_playlists(p_id)
+        
+        list_track_id = []
+        if playlist_json:
+            
+            # Get playlist info
+            playlist_name = playlist_json.get("name",{})
+            playlist_total_tracks = playlist_json.get("tracks",{}).get("total",{})
+            
+            # Get all track_id frorm playlist    
+            for track in playlist_json.get("tracks",{}).get("items",{}):
+                list_track_id.append(track.get("track",{}).get("id",{}))
+
+        
+                 
+    
     
