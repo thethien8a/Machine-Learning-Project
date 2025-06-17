@@ -176,7 +176,4 @@ if __name__ == "__main__":
             for track in playlist_json.get("tracks",{}).get("items",{}):
                 list_track_id.append(track.get("track",{}).get("id",{}))
 
-        
-                 
-    
     
