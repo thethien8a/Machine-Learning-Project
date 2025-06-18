@@ -1,0 +1,1 @@
+Trong file "Trình bày các thuật toán phân cụm.pdf" có trình bày các thuật toán phân cụm trong machine learning. Người đọc có thể tham khảo (Đây là project của môn học Phân tích số liệu tại ĐHBKHN)
