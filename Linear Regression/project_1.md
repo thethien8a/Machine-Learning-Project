@@ -39,29 +39,43 @@ Báo cáo này được thiết kế để mang lại giá trị thực tiễn c
 
 Dự án sẽ cung cấp một bộ các dashboards tương tác, mỗi dashboard tập trung vào một khía cạnh phân tích riêng biệt:
 
-#### **Dashboard 1: Tổng quan Toàn cảnh Thị trường (Market Overview)**
+### **Dashboard 1: Tổng quan Toàn cảnh Thị trường (Market Overview)**
 *   **Mục tiêu:** Cung cấp cái nhìn 360 độ về thị trường cho các nhà quản lý và lãnh đạo.
 *   **Các thành phần chính:**
     *   **Bản đồ nhiệt tuyển dụng toàn cầu:** Hiển thị các quốc gia "điểm nóng" về nhu cầu nhân lực AI/Data.
     *   **Biểu đồ Top 10 chức danh "hot" nhất:** Xếp hạng các vai trò được tìm kiếm nhiều nhất.
     *   **Phân bổ cấp độ kinh nghiệm:** Tỷ lệ tuyển dụng theo các cấp bậc (Entry, Mid, Senior, Executive).
-    *   **Biểu đồ xu hướng tuyển dụng theo thời gian:** Theo dõi sự phát triển của thị trường qua các tháng/quý.
 
-#### **Dashboard 2: Phân tích Chuyên sâu về Lương (Salary Deep-Dive)**
+**Tóm tắt các phân tích đã thực hiện & Insights:**
+
+Dựa trên các mục tiêu trên, các phân tích sau đã được thực hiện trong notebook để cung cấp insight cho ban lãnh đạo:
+- **Phân tích Lương & Cấp bậc:** Đã trực quan hóa mối quan hệ giữa cấp bậc kinh nghiệm và mức lương trung bình, cho thấy sự tăng trưởng rõ rệt qua từng cấp bậc, làm cơ sở cho việc xây dựng thang bảng lương.
+- **Phân tích Kỹ năng Chuyên sâu:** 
+    - Xây dựng bộ lọc tương tác để xem top 10 kỹ năng yêu cầu cho từng chức danh công việc.
+    - Xác định top 10 kỹ năng được thị trường trả lương cao nhất, cung cấp insight về "bộ kỹ năng vàng" để định hướng đào tạo.
+- **Phân tích Phúc lợi:** Tạo card KPI tương tác để xem nhanh điểm phúc lợi trung bình, có thể lọc theo ngành, vị trí, và cấp bậc.
+- **Phân tích Địa lý & Nhân tài:**
+    - Xác định top 10 "điểm nóng" nhân tài và phân tích kết hợp giữa số lượng và chi phí lương trung bình tại các điểm đó.
+    - Xây dựng bộ lọc để tìm kiếm các chuyên gia theo cấp bậc tại các quốc gia khác nhau.
+- **Phân tích Mô hình làm việc (Remote/Hybrid/On-site):**
+    - Tạo biểu đồ tương tác để phân tích sự phổ biến của các mô hình làm việc, có thể lọc theo ngành và quy mô công ty.
+    - Phân tích chi phí lương trung bình cho từng mô hình làm việc để hỗ trợ ra quyết định về chính sách làm việc.
+
+### **Dashboard 2: Phân tích Chuyên sâu về Lương (Salary Deep-Dive)**
 *   **Mục tiêu:** Cung cấp thông tin chi tiết về các yếu tố ảnh hưởng đến lương cho người lao động và bộ phận nhân sự.
 *   **Các thành phần chính:**
     *   **Biểu đồ hộp (Box Plot) so sánh lương:** Theo chức danh, cấp độ kinh nghiệm và quốc gia.
     *   **Phân tích tác động của làm việc từ xa (remote work) đến lương.**
     *   **So sánh mức lương trung bình giữa các ngành (industries).**
 
-#### **Dashboard 3: Phân tích Kỹ năng và Yêu cầu (Skills & Requirements)**
+### **Dashboard 3: Phân tích Kỹ năng và Yêu cầu (Skills & Requirements)**
 *   **Mục tiêu:** Hướng dẫn sinh viên và người đi làm về các kỹ năng cần thiết để phát triển sự nghiệp.
 *   **Các thành phần chính:**
     *   **Đám mây từ (Word Cloud) về các kỹ năng hàng đầu:** Hiển thị các công nghệ và kỹ năng được yêu cầu nhiều nhất.
     *   **Biểu đồ phân tán (Scatter Plot) về tương quan giữa số năm kinh nghiệm và lương.**
     *   **Phân tích yêu cầu về học vấn (education) cho các vị trí khác nhau.**
 
-#### **Dashboard 4: Công cụ Dự báo Lương Tương tác (Interactive Salary Predictor)**
+### **Dashboard 4: Công cụ Dự báo Lương Tương tác (Interactive Salary Predictor)**
 *   **Mục tiêu:** Tích hợp mô hình hồi quy tuyến tính để cung cấp một công cụ tham khảo thực tiễn.
 *   **Các thành phần chính:**
     *   **Các bộ lọc tương tác:** Cho phép người dùng tùy chọn quốc gia, ngành, cấp độ kinh nghiệm.
