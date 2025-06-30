@@ -47,10 +47,3 @@ Dự án sẽ cung cấp 4 dashboards tương tác:
     *   `application_deadline`: Hạn chót nộp đơn.
     *   `job_description_length`: Độ dài mô tả công việc.
     *   `benefits_score`: Điểm số gói phúc lợi (1-10).
-*   **Cấu trúc tệp dữ liệu:**
-    *   `main_dataset.csv`
-    *   `skills_analysis.csv`
-    *   `company_profiles.csv`
-    *   `geographic_data.csv`
-    *   `time_series.csv`
-    *   `data_dictionary.pdf`
