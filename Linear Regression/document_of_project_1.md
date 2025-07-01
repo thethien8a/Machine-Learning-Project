@@ -31,7 +31,6 @@ Dự án sẽ cung cấp 4 dashboards tương tác:
     *   `job_title`: Chức danh công việc chuẩn hóa.
     *   `salary_usd`: Mức lương hàng năm bằng USD (đã chuẩn hóa).
     *   `salary_currency`: Tiền tệ gốc của mức lương.
-    *   `salary_local`: Mức lương bằng tiền tệ địa phương.
     *   `experience_level`: Cấp độ kinh nghiệm (EN, MI, SE, EX).
     *   `employment_type`: Loại hình việc làm (FT, PT, CT, FL).
     *   `job_category`: Danh mục công việc.
