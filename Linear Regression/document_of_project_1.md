@@ -33,7 +33,6 @@ Dự án sẽ cung cấp 4 dashboards tương tác:
     *   `salary_currency`: Tiền tệ gốc của mức lương.
     *   `experience_level`: Cấp độ kinh nghiệm (EN, MI, SE, EX).
     *   `employment_type`: Loại hình việc làm (FT, PT, CT, FL).
-    *   `job_category`: Danh mục công việc.
     *   `company_location`: Quốc gia của công ty.
     *   `company_size`: Quy mô công ty (S, M, L).
     *   `employee_residence`: Quốc gia cư trú của nhân viên.
