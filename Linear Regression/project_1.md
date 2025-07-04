@@ -63,21 +63,28 @@ Dựa trên các mục tiêu trên, các phân tích sau đã được thực hi
 
 ### **Dashboard 2: Phân tích Chuyên sâu về Lương (Salary Deep-Dive)**
 *   **Mục tiêu:** Cung cấp thông tin chi tiết về các yếu tố ảnh hưởng đến lương cho người lao động và bộ phận nhân sự.
-*   **Các thành phần chính:**
-    *   **Biểu đồ hộp (Box Plot) so sánh lương:** Theo chức danh, cấp độ kinh nghiệm và quốc gia.
-    *   **Phân tích tác động của làm việc từ xa (remote work) đến lương.**
-    *   **So sánh mức lương trung bình giữa các ngành (industries).**
+*   **Các thành phần chính (đã điều chỉnh theo thực tế triển khai):**
+    *   **Biểu đồ phân tán (Scatter Plot) và Hồi quy tuyến tính:** Trực quan hóa mối quan hệ giữa kinh nghiệm và lương.
+    *   **Biểu đồ cột tương tác (Interactive Bar Chart):** So sánh lương trung vị theo chức danh, có bộ lọc theo quốc gia.
+    *   **Biểu đồ tròn (Pie Chart):** Phân tích tỷ lệ tuyển dụng giữa thị trường trong nước và quốc tế.
+    *   **Biểu đồ cột (Bar Chart):** So sánh mức lương trung bình theo quy mô công ty.
 
-### **Dashboard 3: Phân tích Kỹ năng và Yêu cầu (Skills & Requirements)**
-*   **Mục tiêu:** Hướng dẫn sinh viên và người đi làm về các kỹ năng cần thiết để phát triển sự nghiệp.
-*   **Các thành phần chính:**
-    *   **Đám mây từ (Word Cloud) về các kỹ năng hàng đầu:** Hiển thị các công nghệ và kỹ năng được yêu cầu nhiều nhất.
-    *   **Biểu đồ phân tán (Scatter Plot) về tương quan giữa số năm kinh nghiệm và lương.**
-    *   **Phân tích yêu cầu về học vấn (education) cho các vị trí khác nhau.**
+**Tóm tắt các phân tích đã thực hiện & Insights:**
 
-### **Dashboard 4: Công cụ Dự báo Lương Tương tác (Interactive Salary Predictor)**
-*   **Mục tiêu:** Tích hợp mô hình hồi quy tuyến tính để cung cấp một công cụ tham khảo thực tiễn.
+Dựa trên các mục tiêu trên, các phân tích sau đã được thực hiện trong notebook để cung cấp insight cho người lao động và bộ phận nhân sự:
+- **Phân tích Tương quan Lương và Kinh nghiệm:** Đã trực quan hóa mối quan hệ tuyến tính giữa số năm kinh nghiệm và mức lương, khẳng định kinh nghiệm là yếu tố then chốt quyết định thu nhập. Insight này giúp người lao động đặt mục tiêu thăng tiến và HR xây dựng khung lương dựa trên kinh nghiệm.
+- **So sánh Lương theo Chức danh:** Sử dụng biểu đồ cột tương tác để so sánh mức lương trung vị giữa các chức danh khác nhau. Người dùng có thể lọc theo quốc gia, giúp người lao động hiểu rõ giá trị của từng vai trò trên thị trường và HR định giá vị trí chính xác.
+- **Phân tích Thị trường Lao động Nội địa vs. Quốc tế:** Biểu đồ tròn đã cho thấy tỷ lệ tuyển dụng giữa các công ty trong nước và quốc tế. Insight này giúp người lao động định vị chiến lược tìm việc (tập trung vào thị trường nào) và giúp các công ty trong nước hiểu rõ mức độ cạnh tranh từ các công ty nước ngoài.
+- **Tác động của Quy mô Công ty đến Lương:** Phân tích mức lương trung bình theo quy mô công ty, cung cấp cho người tìm việc cái nhìn về việc nên chọn công ty lớn hay nhỏ để tối ưu hóa thu nhập.
+
+### **Dashboard 3: Phân Tích Vòng Đời Tuyển Dụng & Học Vấn (Recruitment Lifecycle & Education Analysis)**
+*   **Mục tiêu:** Cung cấp insight cho bộ phận nhân sự về hiệu quả quy trình tuyển dụng và cho người lao động/sinh viên về giá trị của học vấn.
 *   **Các thành phần chính:**
-    *   **Các bộ lọc tương tác:** Cho phép người dùng tùy chọn quốc gia, ngành, cấp độ kinh nghiệm.
-    *   **Giao diện nhập liệu:** Người dùng nhập thông tin cá nhân (kinh nghiệm, kỹ năng, v.v.).
-    *   **Kết quả dự báo:** Hiển thị mức lương ước tính dựa trên mô hình đã xây dựng.
+    *   **Phân tích thời gian tuyển dụng (Time-to-Fill):**
+        *   Tính toán khoảng thời gian từ `posting_date` đến `application_deadline`.
+        *   Trực quan hóa thời gian tuyển dụng trung bình theo ngành (`industry`) và quy mô công ty (`company_size`) để HR xác định các "điểm nghẽn" trong quy trình.
+    *   **Phân tích xu hướng tuyển dụng theo mùa:**
+        *   Biểu đồ thể hiện số lượng công việc được đăng tuyển theo từng tháng/quý, giúp doanh nghiệp lên kế hoạch nhân sự và người tìm việc chọn "thời điểm vàng" để ứng tuyển.
+    *   **Phân tích ROI của Bằng Cấp (Education ROI):**
+        *   So sánh mức lương trung vị (`salary_usd`) giữa các cấp độ học vấn (`education_required`: Bachelor, Master, PhD) cho cùng một cấp bậc kinh nghiệm (`experience_level`).
+        *   Phân tích mức độ yêu cầu học vấn phổ biến cho từng chức danh (`job_title`).
