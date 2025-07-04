@@ -40,51 +40,56 @@ Báo cáo này được thiết kế để mang lại giá trị thực tiễn c
 Dự án sẽ cung cấp một bộ các dashboards tương tác, mỗi dashboard tập trung vào một khía cạnh phân tích riêng biệt:
 
 ### **Dashboard 1: Tổng quan Toàn cảnh Thị trường (Market Overview)**
-*   **Mục tiêu:** Cung cấp cái nhìn 360 độ về thị trường cho các nhà quản lý và lãnh đạo.
-*   **Các thành phần chính:**
-    *   **Bản đồ nhiệt tuyển dụng toàn cầu:** Hiển thị các quốc gia "điểm nóng" về nhu cầu nhân lực AI/Data.
-    *   **Biểu đồ Top 10 chức danh "hot" nhất:** Xếp hạng các vai trò được tìm kiếm nhiều nhất.
-    *   **Phân bổ cấp độ kinh nghiệm:** Tỷ lệ tuyển dụng theo các cấp bậc (Entry, Mid, Senior, Executive).
+- **Mục tiêu:** Cung cấp cái nhìn 360 độ về các xu hướng chính của thị trường.
+- **Các Phân Tích Đã Thực Hiện:**
+    - **Top 10 Chức danh "Hot" nhất:** Sử dụng biểu đồ cột để xếp hạng các vị trí có nhu cầu tuyển dụng cao nhất.
+    - **Top 10 "Điểm nóng" Địa lý:** Phân tích và xếp hạng 10 quốc gia/khu vực có số lượng tin tuyển dụng nhiều nhất.
+    - **Phân bổ theo Ngành và Quy mô Công ty:** Trực quan hóa số lượng tin đăng theo từng ngành (`industry`) và quy mô công ty (`S`, `M`, `L`).
+- **So Sánh Với Kế Hoạch:**
+    - **Hoàn thành:** Đã xác định được các chức danh, điểm nóng địa lý, và xu hướng theo ngành/quy mô.
+    - **Điều chỉnh:** Thay vì bản đồ nhiệt, đã sử dụng biểu đồ cột để thể hiện các "điểm nóng" địa lý, tập trung vào top 10. Phân tích cấp độ kinh nghiệm được tích hợp trong các dashboard sau.
 
-**Tóm tắt các phân tích đã thực hiện & Insights:**
-
-Dựa trên các mục tiêu trên, các phân tích sau đã được thực hiện trong notebook để cung cấp insight cho ban lãnh đạo:
-- **Phân tích Lương & Cấp bậc:** Đã trực quan hóa mối quan hệ giữa cấp bậc kinh nghiệm và mức lương trung bình, cho thấy sự tăng trưởng rõ rệt qua từng cấp bậc, làm cơ sở cho việc xây dựng thang bảng lương.
-- **Phân tích Kỹ năng Chuyên sâu:** 
-    - Xây dựng bộ lọc tương tác để xem top 10 kỹ năng yêu cầu cho từng chức danh công việc.
-    - Xác định top 10 kỹ năng được thị trường trả lương cao nhất, cung cấp insight về "bộ kỹ năng vàng" để định hướng đào tạo.
-- **Phân tích Phúc lợi:** Tạo card KPI tương tác để xem nhanh điểm phúc lợi trung bình, có thể lọc theo ngành, vị trí, và cấp bậc.
-- **Phân tích Địa lý & Nhân tài:**
-    - Xác định top 10 "điểm nóng" nhân tài và phân tích kết hợp giữa số lượng và chi phí lương trung bình tại các điểm đó.
-    - Xây dựng bộ lọc để tìm kiếm các chuyên gia theo cấp bậc tại các quốc gia khác nhau.
-- **Phân tích Mô hình làm việc (Remote/Hybrid/On-site):**
-    - Tạo biểu đồ tương tác để phân tích sự phổ biến của các mô hình làm việc, có thể lọc theo ngành và quy mô công ty.
-    - Phân tích chi phí lương trung bình cho từng mô hình làm việc để hỗ trợ ra quyết định về chính sách làm việc.
-
-### **Dashboard 2: Phân tích Chuyên sâu về Lương (Salary Deep-Dive)**
-*   **Mục tiêu:** Cung cấp thông tin chi tiết về các yếu tố ảnh hưởng đến lương cho người lao động và bộ phận nhân sự.
-*   **Các thành phần chính (đã điều chỉnh theo thực tế triển khai):**
-    *   **Biểu đồ phân tán (Scatter Plot) và Hồi quy tuyến tính:** Trực quan hóa mối quan hệ giữa kinh nghiệm và lương.
-    *   **Biểu đồ cột tương tác (Interactive Bar Chart):** So sánh lương trung vị theo chức danh, có bộ lọc theo quốc gia.
-    *   **Biểu đồ tròn (Pie Chart):** Phân tích tỷ lệ tuyển dụng giữa thị trường trong nước và quốc tế.
-    *   **Biểu đồ cột (Bar Chart):** So sánh mức lương trung bình theo quy mô công ty.
-
-**Tóm tắt các phân tích đã thực hiện & Insights:**
-
-Dựa trên các mục tiêu trên, các phân tích sau đã được thực hiện trong notebook để cung cấp insight cho người lao động và bộ phận nhân sự:
-- **Phân tích Tương quan Lương và Kinh nghiệm:** Đã trực quan hóa mối quan hệ tuyến tính giữa số năm kinh nghiệm và mức lương, khẳng định kinh nghiệm là yếu tố then chốt quyết định thu nhập. Insight này giúp người lao động đặt mục tiêu thăng tiến và HR xây dựng khung lương dựa trên kinh nghiệm.
-- **So sánh Lương theo Chức danh:** Sử dụng biểu đồ cột tương tác để so sánh mức lương trung vị giữa các chức danh khác nhau. Người dùng có thể lọc theo quốc gia, giúp người lao động hiểu rõ giá trị của từng vai trò trên thị trường và HR định giá vị trí chính xác.
-- **Phân tích Thị trường Lao động Nội địa vs. Quốc tế:** Biểu đồ tròn đã cho thấy tỷ lệ tuyển dụng giữa các công ty trong nước và quốc tế. Insight này giúp người lao động định vị chiến lược tìm việc (tập trung vào thị trường nào) và giúp các công ty trong nước hiểu rõ mức độ cạnh tranh từ các công ty nước ngoài.
-- **Tác động của Quy mô Công ty đến Lương:** Phân tích mức lương trung bình theo quy mô công ty, cung cấp cho người tìm việc cái nhìn về việc nên chọn công ty lớn hay nhỏ để tối ưu hóa thu nhập.
+### **Dashboard 2: Phân tích Chuyên sâu về Lương & Kỹ năng (Salary & Skills Deep-Dive)**
+- **Mục tiêu:** Cung cấp thông tin chi tiết về các yếu tố ảnh hưởng đến lương và các kỹ năng có giá trị cao.
+- **Các Phân Tích Đã Thực Hiện:**
+    - **Tương quan Lương và Kinh nghiệm:** Biểu đồ phân tán và hồi quy tuyến tính cho thấy mức lương tăng rõ rệt theo số năm kinh nghiệm.
+    - **Benchmark Lương theo Chức danh:** Biểu đồ cột so sánh mức lương trung vị giữa các `job_title`.
+    - **Tác động của Quy mô Công ty và Mô hình làm việc:** Phân tích lương trung bình theo `company_size` và `remote_ratio`.
+    - **Phân tích Kỹ năng "Vàng":**
+        - Xác định **Top 10 kỹ năng được yêu cầu nhiều nhất** cho từng chức danh.
+        - Phân tích và xếp hạng **Top 10 kỹ năng được trả lương cao nhất**.
+- **So Sánh Với Kế Hoạch:**
+    - **Hoàn thành:** Đã thực hiện phần lớn các mục tiêu, bao gồm benchmark lương theo vị trí, kinh nghiệm, và tác động của remote work.
+    - **Tích hợp:** Phân tích kỹ năng (vốn thuộc D3 trong kế hoạch gốc) đã được tích hợp vào đây để tạo một cái nhìn toàn diện hơn về "giá trị" của một ứng viên.
 
 ### **Dashboard 3: Phân Tích Vòng Đời Tuyển Dụng & Học Vấn (Recruitment Lifecycle & Education Analysis)**
-*   **Mục tiêu:** Cung cấp insight cho bộ phận nhân sự về hiệu quả quy trình tuyển dụng và cho người lao động/sinh viên về giá trị của học vấn.
-*   **Các thành phần chính:**
-    *   **Phân tích thời gian tuyển dụng (Time-to-Fill):**
-        *   Tính toán khoảng thời gian từ `posting_date` đến `application_deadline`.
-        *   Trực quan hóa thời gian tuyển dụng trung bình theo ngành (`industry`) và quy mô công ty (`company_size`) để HR xác định các "điểm nghẽn" trong quy trình.
-    *   **Phân tích xu hướng tuyển dụng theo mùa:**
-        *   Biểu đồ thể hiện số lượng công việc được đăng tuyển theo từng tháng/quý, giúp doanh nghiệp lên kế hoạch nhân sự và người tìm việc chọn "thời điểm vàng" để ứng tuyển.
-    *   **Phân tích ROI của Bằng Cấp (Education ROI):**
-        *   So sánh mức lương trung vị (`salary_usd`) giữa các cấp độ học vấn (`education_required`: Bachelor, Master, PhD) cho cùng một cấp bậc kinh nghiệm (`experience_level`).
-        *   Phân tích mức độ yêu cầu học vấn phổ biến cho từng chức danh (`job_title`).
+- **Mục tiêu:** Cung cấp insight về hiệu quả quy trình tuyển dụng và giá trị của học vấn.
+- **Các Phân Tích Đã Thực Hiện:**
+  - **Phân tích Thời gian Tuyển dụng (Time-to-Fill):**
+    - Tính toán và trực quan hóa thời gian từ lúc đăng tin đến hạn chót (`recruitment_days`).
+    - Sử dụng Histogram và Heatmap để phân tích thời gian tuyển dụng trung bình theo ngành và quy mô công ty.
+  - **Phân tích Xu hướng Tuyển dụng theo Mùa:** Biểu đồ cột tương tác thể hiện số lượng công việc đăng theo tháng/quý/năm, giúp xác định "thời điểm vàng" để ứng tuyển hoặc tuyển dụng.
+  - **Phân tích Tỷ suất Hoàn vốn (ROI) của Bằng cấp:** So sánh phân phối lương theo các cấp độ học vấn (`education_required`) ở các cấp bậc kinh nghiệm khác nhau.
+- **So Sánh Với Kế Hoạch:**
+    - **Hoàn thành (với sự điều chỉnh):** Nội dung này được phát triển sâu hơn trong quá trình phân tích, thay thế cho kế hoạch ban đầu về Dashboard 3 (chỉ tập trung vào kỹ năng). Nó cung cấp những insight độc đáo về quy trình và giá trị học vấn.
+
+### **Phần 4: Xây Dựng Mô Hình Dự Báo Lương (Salary Prediction Model)**
+
+#### **1. Xây Dựng Mô Hình Hồi quy Tuyến tính**
+- **Mục tiêu:** Xây dựng một mô hình Machine Learning có khả năng dự đoán mức lương (`salary_usd`) dựa trên các thuộc tính của công việc.
+- **Các biến đầu vào (Features):** `experience_level`, `company_size`, `job_category`, `remote_ratio`, `recruitment_days`, `benefits_score`.
+- **Phương pháp:**
+  - **Tiền xử lý:** Sử dụng kỹ thuật One-Hot Encoding để chuyển đổi các biến phân loại (categorical) thành dạng số mà mô hình có thể hiểu được.
+  - **Huấn luyện:** Chia dữ liệu thành tập huấn luyện và tập kiểm tra, sau đó huấn luyện mô hình Hồi quy Tuyến tính (`Linear Regression`).
+
+#### **2. Đánh Giá Hiệu Suất Mô Hình**
+- **Mục tiêu:** Đo lường độ chính xác và mức độ hiệu quả của mô hình dự báo.
+- **Các chỉ số đánh giá:**
+  - **R-squared (R²):** Tỷ lệ phương sai trong biến phụ thuộc (lương) có thể được dự đoán từ các biến độc lập.
+  - **Mean Absolute Error (MAE):** Sai số tuyệt đối trung bình - cho biết trung bình mô hình dự đoán sai lệch bao nhiêu USD.
+  - **Mean Squared Error (MSE) & Root Mean Squared Error (RMSE):** Đo lường sai số trung bình bình phương, với RMSE có cùng đơn vị với biến mục tiêu (USD).
+- **Trực quan hóa:** Sử dụng biểu đồ Scatter Plot để so sánh mức lương thực tế và mức lương do mô hình dự đoán.
+
+#### **3. Triển Khai Công Cụ Tương Tác**
+- **Mục tiêu:** Tạo ra một giao diện đơn giản cho phép người dùng nhập thông tin về công việc và nhận lại mức lương dự đoán.
+- **Công nghệ:** Sử dụng các thư viện như `ipywidgets` để tạo các dropdown, slider cho người dùng cuối tương tác trực tiếp trên notebook.
