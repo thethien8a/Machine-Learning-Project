@@ -8,8 +8,9 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
 import warnings
@@ -267,6 +268,31 @@ def evaluate_model(model, X_test, y_test_log):
     
     return y_pred_log
 
+def train_random_forest(X_train, y_train):
+    """Huấn luyện mô hình RandomForestRegressor."""
+    print("\nBat dau huan luyen mo hinh Random Forest...")
+    model = RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1)
+    model.fit(X_train, y_train)
+    print("Mo hinh Random Forest da duoc huan luyen thanh cong.")
+    return model
+
+def train_to_not_overfit_rdf(X_train, y_train):
+    """
+    Huan luyen mo hinh RandomForestRegressor voi cac tham so de giam overfitting.
+    """
+    print("\nBat dau huan luyen mo hinh Random Forest (chong overfitting)...")
+    model = RandomForestRegressor(
+        n_estimators=100,
+        max_depth=15,           # Gioi han do sau cua cay
+        min_samples_leaf=5,     # So mau toi thieu o mot la
+        min_samples_split=10,   # So mau toi thieu de chia mot node
+        random_state=42,
+        n_jobs=-1
+    )
+    model.fit(X_train, y_train)
+    print("Mo hinh Random Forest (chong overfitting) da duoc huan luyen thanh cong.")
+    return model
+
 def standardize_features(X_train, X_test):
     """
     Chuẩn hóa các cột số, bỏ qua các cột one-hot encoded.
@@ -289,6 +315,45 @@ def standardize_features(X_train, X_test):
     X_test_scaled[cols_to_scale] = scaler.transform(X_test[cols_to_scale])
     
     return X_train_scaled, X_test_scaled
+
+def tune_rf_with_randomized_search(X_train, y_train):
+    """
+    Tinh chỈnh hyperparameter cho RandomForestRegressor su dung RandomizedSearchCV.
+    """
+    print("\nBat dau tinh chinh hyperparameter voi RandomizedSearchCV...")
+    
+    # Dinh nghia luoi tham so de tim kiem
+    param_distributions = {
+        'n_estimators': [int(x) for x in np.linspace(start=100, stop=1000, num=10)],
+        'max_depth': [int(x) for x in np.linspace(10, 100, num=10)] + [None],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4],
+        'max_features': [1.0, 'sqrt'] # 'auto' is deprecated
+    }
+    
+    # Khoi tao model co so
+    rf = RandomForestRegressor(random_state=42)
+    
+    # Khoi tao RandomizedSearchCV
+    rf_random = RandomizedSearchCV(
+        estimator=rf,
+        param_distributions=param_distributions,
+        n_iter=50,  # So luong to hop tham so se thu
+        cv=3,       # So fold cho cross-validation
+        verbose=2,
+        random_state=42,
+        n_jobs=-1   # Su dung tat ca CPU cores
+    )
+    
+    # Fit de tim kiem
+    rf_random.fit(X_train, y_train)
+    
+    print("\nTo hop tham so tot nhat duoc tim thay:")
+    print(rf_random.best_params_)
+    
+    # Tra ve mo hinh tot nhat da duoc huan luyen
+    print("\nMo hinh Random Forest voi tham so tot nhat da duoc huan luyen.")
+    return rf_random.best_estimator_
 
 def main():
     """Hàm chính để chạy toàn bộ pipeline xử lý dữ liệu."""
@@ -320,18 +385,20 @@ def main():
     y_train_log = np.log1p(y_train)
     y_test_log = np.log1p(y_test)
 
-    # Xử lý missing values đơn giản bằng cách fill với median
+    # Xử lý missing values đơn giản bằng cách fill với median (BẮT BUỘC)
     X_train = X_train.fillna(X_train.median())
     X_test = X_test.fillna(X_test.median())
 
-    # Chuẩn hóa các feature
-    X_train, X_test = standardize_features(X_train, X_test)
-
-    # Huấn luyện mô hình trên dữ liệu log
-    model = train_linear_regression(X_train, y_train_log)
+    # --- Tinh chinh RF voi RandomizedSearchCV ---
+    best_rf_model = tune_rf_with_randomized_search(X_train, y_train_log)
     
-    # Đánh giá mô hình
-    evaluate_model(model, X_test, y_test_log)
+    print("\n\n--- Danh gia mo hinh Random Forest (Tuned with RandomizedSearchCV) ---")
+    
+    print("\nDanh gia tren tap test:")
+    evaluate_model(best_rf_model, X_test, y_test_log)
+    
+    print("\nDanh gia tren tap train:")
+    evaluate_model(best_rf_model, X_train, y_train_log)
 
 
 if __name__ == "__main__":
