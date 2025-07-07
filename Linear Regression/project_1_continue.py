@@ -124,6 +124,7 @@ def ohe_encode_features(train_df, test_df):
         return train_encoded_df, test_encoded_df
 
     combined_df = pd.concat([train_encoded_df[categorical_columns], test_encoded_df[categorical_columns]], ignore_index=True)
+   
     combined_encoded = pd.get_dummies(combined_df, columns=categorical_columns, prefix=categorical_columns)
     
     train_dummies = combined_encoded[:len(train_encoded_df)]
@@ -138,6 +139,7 @@ def ohe_encode_features(train_df, test_df):
     test_dummies = test_dummies.reset_index(drop=True)
     
     train_final = pd.concat([train_encoded_df, train_dummies], axis=1)
+
     test_final = pd.concat([test_encoded_df, test_dummies], axis=1)
     
     return train_final, test_final
@@ -239,26 +241,31 @@ def train_linear_regression(X_train, y_train):
     print("Mo hinh da duoc huan luyen thanh cong.")
     return model
 
-def evaluate_model(model, X_test, y_test):
+def evaluate_model(model, X_test, y_test_log):
     """Đánh giá mô hình và in ra các metrics."""
-    y_pred = model.predict(X_test)
+    # Mô hình dự đoán trên thang đo log
+    y_pred_log = model.predict(X_test)
     
-    mae = mean_absolute_error(y_test, y_pred)
-    mse = mean_squared_error(y_test, y_pred)
+    # Chuyển đổi về thang đo gốc để đánh giá
+    y_test_original = np.expm1(y_test_log)
+    y_pred_original = np.expm1(y_pred_log)
+    
+    mae = mean_absolute_error(y_test_original, y_pred_original)
+    mse = mean_squared_error(y_test_original, y_pred_original)
     rmse = np.sqrt(mse)
-    r2 = r2_score(y_test, y_pred)
+    r2 = r2_score(y_test_original, y_pred_original)
     
     evaluation_summary = (
-        "\n--- Model Evaluation ---\n"
+        "\n--- Model Evaluation (Log Transformed Target) ---\n"
         f"Mean Absolute Error (MAE): ${mae:,.2f}\n"
         f"Mean Squared Error (MSE): ${mse:,.2f}\n"
         f"Root Mean Squared Error (RMSE): ${rmse:,.2f}\n"
         f"R-squared (R2): {r2:.2f}\n"
-        "------------------------"
+        "------------------------------------------------"
     )
     print(evaluation_summary)
     
-    return y_pred
+    return y_pred_log
 
 def standardize_features(X_train, X_test):
     """
@@ -309,6 +316,10 @@ def main():
     X_test = test_df.drop('salary_usd', axis=1)
     y_test = test_df['salary_usd']
 
+    # Áp dụng Log Transform cho biến mục tiêu
+    y_train_log = np.log1p(y_train)
+    y_test_log = np.log1p(y_test)
+
     # Xử lý missing values đơn giản bằng cách fill với median
     X_train = X_train.fillna(X_train.median())
     X_test = X_test.fillna(X_test.median())
@@ -316,12 +327,11 @@ def main():
     # Chuẩn hóa các feature
     X_train, X_test = standardize_features(X_train, X_test)
 
-    # Huấn luyện mô hình
-    model = train_linear_regression(X_train, y_train)
+    # Huấn luyện mô hình trên dữ liệu log
+    model = train_linear_regression(X_train, y_train_log)
     
     # Đánh giá mô hình
-    evaluate_model(model, X_test, y_test)
-
+    evaluate_model(model, X_test, y_test_log)
 
 
 if __name__ == "__main__":
