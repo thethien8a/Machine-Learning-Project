@@ -11,6 +11,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -160,6 +161,51 @@ def ordinal_encode_features(train_df, test_df):
     
     return train_encoded, test_encoded
 
+def show_histogram_all_columns(df):
+    """Hiển thị histogram cho tất cả các cột trong DataFrame với 3 đồ thị mỗi hàng."""
+    import matplotlib.pyplot as plt
+    import numpy as np
+    
+    # Lấy danh sách các cột số
+    numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+    
+    if not numeric_columns:
+        print("Không có cột số nào để hiển thị histogram.")
+        return
+    
+    # Tính số hàng cần thiết (3 đồ thị mỗi hàng)
+    n_cols = 3
+    n_rows = (len(numeric_columns) + n_cols - 1) // n_cols
+    
+    # Tạo figure với kích thước phù hợp
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5 * n_rows))
+    
+    # Đảm bảo axes là array 2D
+    if n_rows == 1:
+        axes = axes.reshape(1, -1)
+    elif n_cols == 1:
+        axes = axes.reshape(-1, 1)
+    
+    # Vẽ histogram cho từng cột
+    for i, column in enumerate(numeric_columns):
+        row = i // n_cols
+        col = i % n_cols
+        
+        axes[row, col].hist(df[column].dropna(), bins=30, alpha=0.7, color='skyblue', edgecolor='black')
+        axes[row, col].set_title(f'Phân phối của {column}', fontsize=12, pad=10)
+        axes[row, col].set_xlabel(column)
+        axes[row, col].set_ylabel('Tần suất')
+        axes[row, col].grid(True, alpha=0.3)
+    
+    # Ẩn các subplot trống
+    for i in range(len(numeric_columns), n_rows * n_cols):
+        row = i // n_cols
+        col = i % n_cols
+        axes[row, col].set_visible(False)
+    
+    plt.tight_layout()
+    plt.show()
+    
 def target_encode_features(train_df, test_df, columns_to_encode, target_column='salary_usd'):
     """
     Thực hiện Target Encoding cho các cột được chỉ định.
@@ -214,6 +260,29 @@ def evaluate_model(model, X_test, y_test):
     
     return y_pred
 
+def standardize_features(X_train, X_test):
+    """
+    Chuẩn hóa các cột số, bỏ qua các cột one-hot encoded.
+    """
+    # Xác định các cột không phải OHE (có giá trị ngoài 0 và 1)
+    # Đây là một cách heuristic, giả định rằng các cột OHE chỉ chứa 0 và 1
+    cols_to_scale = [
+        col for col in X_train.columns 
+        if not (X_train[col].nunique() == 2 and X_train[col].min() == 0 and X_train[col].max() == 1)
+    ]
+    
+    scaler = StandardScaler()
+    
+    # Fit và transform trên tập train
+    X_train_scaled = X_train.copy()
+    X_train_scaled[cols_to_scale] = scaler.fit_transform(X_train[cols_to_scale])
+    
+    # Chỉ transform trên tập test
+    X_test_scaled = X_test.copy()
+    X_test_scaled[cols_to_scale] = scaler.transform(X_test[cols_to_scale])
+    
+    return X_train_scaled, X_test_scaled
+
 def main():
     """Hàm chính để chạy toàn bộ pipeline xử lý dữ liệu."""
     # Tải và chuẩn bị dữ liệu
@@ -234,7 +303,6 @@ def main():
     train_df, test_df = ordinal_encode_features(train_df, test_df)
     train_df, test_df = ohe_encode_features(train_df, test_df)
     
-    print(train_df.columns.tolist())
     # Tách feature và target
     X_train = train_df.drop('salary_usd', axis=1)
     y_train = train_df['salary_usd']
@@ -244,6 +312,9 @@ def main():
     # Xử lý missing values đơn giản bằng cách fill với median
     X_train = X_train.fillna(X_train.median())
     X_test = X_test.fillna(X_test.median())
+
+    # Chuẩn hóa các feature
+    X_train, X_test = standardize_features(X_train, X_test)
 
     # Huấn luyện mô hình
     model = train_linear_regression(X_train, y_train)
