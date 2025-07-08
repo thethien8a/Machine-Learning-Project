@@ -8,6 +8,7 @@
 
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.linear_model import LinearRegression
@@ -114,6 +115,14 @@ def load_and_prepare_data(filepath):
     
     train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
     return train_df, test_df
+
+def create_interaction_features(df):
+    """Tao cac bien tuong tac."""
+    df_copy = df.copy()
+    # Dam bao cac cot ton tai truoc khi tao tuong tac
+    if 'company_location' in df_copy.columns and 'years_experience' in df_copy.columns:
+        df_copy['location_X_experience'] = df_copy['company_location'] * df_copy['years_experience']
+    return df_copy
 
 def ohe_encode_features(train_df, test_df):
     """Thực hiện One-Hot Encoding cho các cột categorical còn lại."""
@@ -258,7 +267,7 @@ def evaluate_model(model, X_test, y_test_log):
     r2 = r2_score(y_test_original, y_pred_original)
     
     evaluation_summary = (
-        "\n--- Model Evaluation (Log Transformed Target) ---\n"
+        "\n--- Model Evaluation ---\n"
         f"Mean Absolute Error (MAE): ${mae:,.2f}\n"
         f"Mean Squared Error (MSE): ${mse:,.2f}\n"
         f"Root Mean Squared Error (RMSE): ${rmse:,.2f}\n"
@@ -269,6 +278,18 @@ def evaluate_model(model, X_test, y_test_log):
     
     return y_pred_log
 
+def plot_correlation_matrix(df):
+    """Vẽ ma trận tương quan."""
+    copy_df = df.copy().select_dtypes(include=["int", "float"])
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(copy_df.corr(), annot=True, cmap='coolwarm', linewidths=0.5, 
+                xticklabels=True, yticklabels=True)
+    plt.xticks(fontsize=8, rotation=45)
+    plt.yticks(fontsize=8)
+    plt.title('Ma trận tương quan')
+    plt.tight_layout()
+    plt.show()
+
 def plot_feature_importance(model, columns, top_n=20):
     """
     Ve bieu do va in ra top N feature quan trong nhat cua mo hinh.
@@ -277,19 +298,11 @@ def plot_feature_importance(model, columns, top_n=20):
     feature_importance_df = pd.DataFrame({'feature': columns, 'importance': importances})
     feature_importance_df = feature_importance_df.sort_values(by='importance', ascending=False).head(top_n)
     
-    # In ra console de xem trong moi truong hien tai
-    print(f"\n--- Top {top_n} Feature Importance ---")
-    print(feature_importance_df)
-    print("---------------------------------")
-    
-    # Ve bieu do (se hien thi trong moi truong notebook)
     plt.figure(figsize=(10, top_n / 2))
     sns.barplot(x='importance', y='feature', data=feature_importance_df, palette='viridis')
-    plt.title(f'Top {top_n} Most Important Features')
+    plt.title(f'Top {top_n} features quan trọng nhất')
     plt.tight_layout()
-    # Trong môi trường script, bạn có thể lưu biểu đồ ra file
-    plt.savefig('feature_importance.png')
-    print("\nBieu do Feature Importance da duoc luu vao file 'feature_importance.png'")
+    plt.show()
 
 def train_random_forest(X_train, y_train):
     """Huấn luyện mô hình RandomForestRegressor."""
@@ -390,9 +403,8 @@ def tune_rf_with_randomized_search(X_train, y_train):
     
     print("\nTo hop tham so tot nhat duoc tim thay:")
     print(rf_random.best_params_)
-    
-    # Tra ve mo hinh tot nhat da duoc huan luyen
-    print("\nMo hinh Random Forest voi tham so tot nhat da duoc huan luyen.")
+
+    print("\nMô hình Random Forest với tham số tốt nhất đã được huấn luyện.")
     return rf_random.best_estimator_
 
 def main():
@@ -400,19 +412,21 @@ def main():
     # Tải và chuẩn bị dữ liệu
     train_df, test_df = load_and_prepare_data('ai_job_dataset1.csv')
     
-    # Feature Engineering cho skills
+    # Feature Engineering cho kỹ năng
     train_df, test_df = process_skill_features(train_df, test_df)
     
     # Loại bỏ các cột không liên quan
     train_df = drop_irrelevant_features(train_df)
     test_df = drop_irrelevant_features(test_df)
 
-    # Target Encoding cho các cột có nhiều giá trị duy nhất
+    # Target Encoding cho các cột có độ đa dạng cao
     high_cardinality_cols = ['employee_residence', 'company_location', 'job_title']
     train_df, test_df = target_encode_features(train_df, test_df, high_cardinality_cols)
 
     # Encoding các biến categorical còn lại
     train_df, test_df = ordinal_encode_features(train_df, test_df)
+    
+    # plot_correlation_matrix(train_df)
     train_df, test_df = ohe_encode_features(train_df, test_df)
     
     # Tách feature và target
@@ -421,26 +435,34 @@ def main():
     X_test = test_df.drop('salary_usd', axis=1)
     y_test = test_df['salary_usd']
 
-    # Xử lý missing values đơn giản bằng cách fill với median (BẮT BUỘC)
-    X_train = X_train.fillna(X_train.median())
-    X_test = X_test.fillna(X_test.median())
-
-    X_train, X_test = standardize_features(X_train, X_test)
-    
     # Áp dụng Log Transform cho biến mục tiêu
     y_train_log = np.log1p(y_train)
     y_test_log = np.log1p(y_test)
 
-    model_rf_new = tune_rf_with_fixed_hyperparameters(X_train, y_train_log)
-    print("\nDanh gia tren tap test:")
-    evaluate_model(model_rf_new, X_test, y_test_log)
-
-    print("\nDanh gia tren tap train:")
-    evaluate_model(model_rf_new, X_train, y_train_log)
+    # Xử lý missing values (Bắt buộc)
+    X_train = X_train.fillna(X_train.median())
+    X_test = X_test.fillna(X_test.median())
     
-    # Hien thi feature importance
-    plot_feature_importance(model_rf_new, X_train.columns)
+    # Tạo biến tương tác (Interaction Feature)
+    X_train = create_interaction_features(X_train)
+    X_test = create_interaction_features(X_test)
+    
+    # Chuẩn hóa các feature
+    X_train, X_test = standardize_features(X_train, X_test)
 
+    # --- Tính chỉnh RF với RandomizedSearchCV ---
+    best_rf_model = tune_rf_with_fixed_hyperparameters(X_train, y_train_log)
+    
+    print("\n\n--- Đánh giá mô hình RF (Tuned with Interaction Feature) ---")
+    
+    print("\nĐánh giá trên tập test:")
+    evaluate_model(best_rf_model, X_test, y_test_log)
+    
+    print("\nĐánh giá trên tập train:")
+    evaluate_model(best_rf_model, X_train, y_train_log)
+    
+    # # Hien thi feature importance
+    # plot_feature_importance(best_rf_model, X_train.columns)
 
 if __name__ == "__main__":
     main()
