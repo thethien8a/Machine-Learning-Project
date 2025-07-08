@@ -1,0 +1,8 @@
+pandas
+seaborn
+numpy
+matplotlib
+kagglehub
+ipywidgets
+plotly
+ipython
