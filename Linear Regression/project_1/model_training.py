@@ -6,6 +6,7 @@ import xgboost as xgb
 
 def train_linear_regression(X_train, y_train):
     """Huấn luyện mô hình Linear Regression."""
+    print("\nBat dau huan luyen mo hinh Linear Regression...")
     model = LinearRegression()
     model.fit(X_train, y_train)
     print("Mo hinh Linear Regression da duoc huan luyen thanh cong.")
@@ -32,11 +33,13 @@ def train_to_not_overfit_rdf(X_train, y_train):
 
 def tune_rf_with_fixed_hyperparameters(X_train, y_train):
     """Huấn luyện RF với các tham số cố định từ kết quả tìm kiếm."""
+    print("\nBat dau huan luyen mo hinh Random Forest voi tham so duoc lay tu ket qua chay tren gg colab ...")
     model = RandomForestRegressor(
         n_estimators=1000, min_samples_split=2, min_samples_leaf=4,
         max_features=1.0, max_depth=10, n_jobs=-1, random_state=42
     )
     model.fit(X_train, y_train)
+    print("Mo hinh Random Forest da duoc huan luyen thanh cong.")
     return model
     
 def tune_rf_with_randomized_search(X_train, y_train):
@@ -60,6 +63,45 @@ def tune_rf_with_randomized_search(X_train, y_train):
     print("\nMô hình Random Forest với tham số tốt nhất đã được huấn luyện.")
     return rf_random.best_estimator_
 
+def tune_xgboost_with_randomized_search(X_train, y_train):
+    """
+    Tinh chỉnh hyperparameter cho XGBoost Regressor su dung RandomizedSearchCV.
+    """
+    print("\nBat dau tinh chinh hyperparameter cho XGBoost voi RandomizedSearchCV...")
+    
+    # Dinh nghia luoi tham so de tim kiem
+    param_distributions = {
+        'n_estimators': [int(x) for x in np.linspace(start=100, stop=1200, num=12)],
+        'learning_rate': [0.01, 0.05, 0.1, 0.2],
+        'max_depth': [3, 4, 5, 6, 8, 10],
+        'subsample': [0.7, 0.8, 0.9, 1.0],
+        'colsample_bytree': [0.7, 0.8, 0.9, 1.0],
+        'gamma': [0, 0.1, 0.2, 0.5]
+    }
+    
+    # Khoi tao model co so
+    xgb_model = xgb.XGBRegressor(objective='reg:squarederror', random_state=42, n_jobs=-1)
+    
+    # Khoi tao RandomizedSearchCV
+    xgb_random = RandomizedSearchCV(
+        estimator=xgb_model,
+        param_distributions=param_distributions,
+        n_iter=50,  # So luong to hop tham so se thu
+        cv=3,       # So fold cho cross-validation
+        verbose=2,
+        random_state=42,
+        n_jobs=-1   # Su dung tat ca CPU cores
+    )
+    
+    # Fit de tim kiem
+    xgb_random.fit(X_train, y_train)
+    
+    print("\nTo hop tham so XGBoost tot nhat duoc tim thay:")
+    print(xgb_random.best_params_)
+    
+    print("\nMo hinh XGBoost voi tham so tot nhat da duoc huan luyen.")
+    return xgb_random.best_estimator_
+      
 def train_xgboost(X_train, y_train):
     """Huan luyen mo hinh XGBoost Regressor."""
     print("\nBat dau huan luyen mo hinh XGBoost...")

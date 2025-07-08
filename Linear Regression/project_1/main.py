@@ -1,3 +1,6 @@
+"""
+    Dự án xây dựng mô hình dự đoán lương của nhân viên AI/Data
+"""
 import numpy as np
 import warnings
 from utils import load_and_prepare_data
@@ -12,7 +15,7 @@ from data_preprocessing import (
     ohe_encode_features,
     standardize_features
 )
-from model_training import train_xgboost
+from model_training import train_xgboost, train_random_forest
 from evaluation import evaluate_model, plot_feature_importance
 
 warnings.filterwarnings('ignore')
@@ -51,9 +54,9 @@ def main():
     X_train, X_test = standardize_features(X_train, X_test)
 
     # 5. Huan luyen va danh gia mo hinh
-    xgb_model = train_xgboost(X_train, y_train_log)
+    xgb_model = train_random_forest(X_train, y_train_log)
     
-    print("\n\n--- Danh gia mo hinh XGBoost ---")
+    print("\n\n--- Danh gia mo hinh Random Forest ---")
     print("\nDanh gia tren tap test:")
     evaluate_model(xgb_model, X_test, y_test_log)
     print("\nDanh gia tren tap train:")

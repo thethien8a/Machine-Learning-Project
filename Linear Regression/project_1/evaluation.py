@@ -38,8 +38,7 @@ def plot_feature_importance(model, columns, top_n=20):
     sns.barplot(x='importance', y='feature', data=feature_importance_df, palette='viridis')
     plt.title(f'Top {top_n} features quan trọng nhất')
     plt.tight_layout()
-    plt.savefig('feature_importance.png')
-    print("\nBieu do Feature Importance da duoc luu vao file 'feature_importance.png'")
+    plt.show()
 
 def plot_correlation_matrix(df):
     """Vẽ ma trận tương quan."""
