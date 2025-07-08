@@ -8,6 +8,7 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -268,6 +269,28 @@ def evaluate_model(model, X_test, y_test_log):
     
     return y_pred_log
 
+def plot_feature_importance(model, columns, top_n=20):
+    """
+    Ve bieu do va in ra top N feature quan trong nhat cua mo hinh.
+    """
+    importances = model.feature_importances_
+    feature_importance_df = pd.DataFrame({'feature': columns, 'importance': importances})
+    feature_importance_df = feature_importance_df.sort_values(by='importance', ascending=False).head(top_n)
+    
+    # In ra console de xem trong moi truong hien tai
+    print(f"\n--- Top {top_n} Feature Importance ---")
+    print(feature_importance_df)
+    print("---------------------------------")
+    
+    # Ve bieu do (se hien thi trong moi truong notebook)
+    plt.figure(figsize=(10, top_n / 2))
+    sns.barplot(x='importance', y='feature', data=feature_importance_df, palette='viridis')
+    plt.title(f'Top {top_n} Most Important Features')
+    plt.tight_layout()
+    # Trong môi trường script, bạn có thể lưu biểu đồ ra file
+    plt.savefig('feature_importance.png')
+    print("\nBieu do Feature Importance da duoc luu vao file 'feature_importance.png'")
+
 def train_random_forest(X_train, y_train):
     """Huấn luyện mô hình RandomForestRegressor."""
     print("\nBat dau huan luyen mo hinh Random Forest...")
@@ -316,6 +339,23 @@ def standardize_features(X_train, X_test):
     
     return X_train_scaled, X_test_scaled
 
+def tune_rf_with_fixed_hyperparameters(X_train, y_train):
+    """
+        Các đối số của hàm được lấy ra từ kết quả chạy RandomizedSearchCV
+        trên Google Colab (Do thời gian chạy rất lâu)
+    """
+    model = RandomForestRegressor(
+        n_estimators=1000,
+        min_samples_split=2,
+        min_samples_leaf=4,
+        max_features=1.0,
+        max_depth=10,
+        n_jobs=-1,
+        random_state=42
+    )
+    model.fit(X_train, y_train)
+    return model
+    
 def tune_rf_with_randomized_search(X_train, y_train):
     """
     Tinh chỈnh hyperparameter cho RandomForestRegressor su dung RandomizedSearchCV.
@@ -381,24 +421,25 @@ def main():
     X_test = test_df.drop('salary_usd', axis=1)
     y_test = test_df['salary_usd']
 
-    # Áp dụng Log Transform cho biến mục tiêu
-    y_train_log = np.log1p(y_train)
-    y_test_log = np.log1p(y_test)
-
     # Xử lý missing values đơn giản bằng cách fill với median (BẮT BUỘC)
     X_train = X_train.fillna(X_train.median())
     X_test = X_test.fillna(X_test.median())
 
-    # --- Tinh chinh RF voi RandomizedSearchCV ---
-    best_rf_model = tune_rf_with_randomized_search(X_train, y_train_log)
+    X_train, X_test = standardize_features(X_train, X_test)
     
-    print("\n\n--- Danh gia mo hinh Random Forest (Tuned with RandomizedSearchCV) ---")
-    
+    # Áp dụng Log Transform cho biến mục tiêu
+    y_train_log = np.log1p(y_train)
+    y_test_log = np.log1p(y_test)
+
+    model_rf_new = tune_rf_with_fixed_hyperparameters(X_train, y_train_log)
     print("\nDanh gia tren tap test:")
-    evaluate_model(best_rf_model, X_test, y_test_log)
-    
+    evaluate_model(model_rf_new, X_test, y_test_log)
+
     print("\nDanh gia tren tap train:")
-    evaluate_model(best_rf_model, X_train, y_train_log)
+    evaluate_model(model_rf_new, X_train, y_train_log)
+    
+    # Hien thi feature importance
+    plot_feature_importance(model_rf_new, X_train.columns)
 
 
 if __name__ == "__main__":
