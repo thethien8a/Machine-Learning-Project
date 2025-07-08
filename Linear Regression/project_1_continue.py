@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
+import xgboost as xgb
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
 import warnings
@@ -407,8 +408,27 @@ def tune_rf_with_randomized_search(X_train, y_train):
     print("\nMô hình Random Forest với tham số tốt nhất đã được huấn luyện.")
     return rf_random.best_estimator_
 
+def train_xgboost(X_train, y_train):
+    """Huan luyen mo hinh XGBoost Regressor."""
+    print("\nBat dau huan luyen mo hinh XGBoost...")
+    # Khoi tao model voi cac tham so co ban, da duoc tinh chinh so bo
+    model = xgb.XGBRegressor(
+        objective='reg:squarederror',
+        n_estimators=1000,
+        learning_rate=0.05,
+        max_depth=6,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        random_state=42,
+        n_jobs=-1
+    )
+    
+    model.fit(X_train, y_train, verbose=False)
+    print("Mo hinh XGBoost da duoc huan luyen thanh cong.")
+    return model
+
 def main():
-    """Hàm chính để chạy toàn bộ pipeline xử lý dữ liệu."""
+    """Ham chinh de chay toan bo pipeline xu ly du lieu."""
     # Tải và chuẩn bị dữ liệu
     train_df, test_df = load_and_prepare_data('ai_job_dataset1.csv')
     
@@ -450,19 +470,19 @@ def main():
     # Chuẩn hóa các feature
     X_train, X_test = standardize_features(X_train, X_test)
 
-    # --- Tính chỉnh RF với RandomizedSearchCV ---
-    best_rf_model = tune_rf_with_fixed_hyperparameters(X_train, y_train_log)
+    # --- Huan luyen va danh gia XGBoost ---
+    xgb_model = train_xgboost(X_train, y_train_log)
     
-    print("\n\n--- Đánh giá mô hình RF (Tuned with Interaction Feature) ---")
+    print("\n\n--- Danh gia mo hinh XGBoost ---")
     
-    print("\nĐánh giá trên tập test:")
-    evaluate_model(best_rf_model, X_test, y_test_log)
+    print("\nDanh gia tren tap test:")
+    evaluate_model(xgb_model, X_test, y_test_log)
     
-    print("\nĐánh giá trên tập train:")
-    evaluate_model(best_rf_model, X_train, y_train_log)
+    print("\nDanh gia tren tap train:")
+    evaluate_model(xgb_model, X_train, y_train_log)
     
-    # # Hien thi feature importance
-    # plot_feature_importance(best_rf_model, X_train.columns)
+    # Hien thi feature importance
+    plot_feature_importance(xgb_model, X_train.columns)
 
 if __name__ == "__main__":
     main()
