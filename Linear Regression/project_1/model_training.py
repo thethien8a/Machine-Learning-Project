@@ -35,7 +35,7 @@ def tune_rf_with_fixed_hyperparameters(X_train, y_train):
     """Huấn luyện RF với các tham số cố định từ kết quả tìm kiếm."""
     print("\nBat dau huan luyen mo hinh Random Forest voi tham so duoc lay tu ket qua chay tren gg colab ...")
     model = RandomForestRegressor(
-        n_estimators=1000, min_samples_split=2, min_samples_leaf=4,
+        n_estimators=700, min_samples_split=10, min_samples_leaf=2,
         max_features=1.0, max_depth=10, n_jobs=-1, random_state=42
     )
     model.fit(X_train, y_train)
@@ -113,3 +113,13 @@ def train_xgboost(X_train, y_train):
     model.fit(X_train, y_train, verbose=False)
     print("Mo hinh XGBoost da duoc huan luyen thanh cong.")
     return model 
+
+def train_xgboost_with_fixed_hyperparameters(X_train, y_train):
+    """Huấn luyện mô hình XGBoost với các tham số cố định tìm được khi chạy trên GG Colab."""
+    model = xgb.XGBRegressor(
+        subsample=0.8, n_estimators=800, max_depth=5, learning_rate=0.1, gamma=0.2, colsample_bytree=0.7,
+        random_state=42, n_jobs=-1
+    )
+    model.fit(X_train, y_train, verbose=False)
+    print("Mô hình XGBoost với tham số lấy từ google colab đã được huấn luyện.")
+    return model

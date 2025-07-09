@@ -77,7 +77,6 @@ Dự án sẽ cung cấp một bộ các dashboards tương tác, mỗi dashboar
 
 #### **1. Xây Dựng Mô Hình Hồi quy Tuyến tính**
 - **Mục tiêu:** Xây dựng một mô hình Machine Learning có khả năng dự đoán mức lương (`salary_usd`) dựa trên các thuộc tính của công việc.
-- **Các biến đầu vào (Features):** `experience_level`, `company_size`, `job_category`, `remote_ratio`, `recruitment_days`, `benefits_score`.
 - **Phương pháp:**
   - **Tiền xử lý:** Sử dụng kỹ thuật One-Hot Encoding để chuyển đổi các biến phân loại (categorical) thành dạng số mà mô hình có thể hiểu được.
   - **Huấn luyện:** Chia dữ liệu thành tập huấn luyện và tập kiểm tra, sau đó huấn luyện mô hình Hồi quy Tuyến tính (`Linear Regression`).
@@ -89,7 +88,3 @@ Dự án sẽ cung cấp một bộ các dashboards tương tác, mỗi dashboar
   - **Mean Absolute Error (MAE):** Sai số tuyệt đối trung bình - cho biết trung bình mô hình dự đoán sai lệch bao nhiêu USD.
   - **Mean Squared Error (MSE) & Root Mean Squared Error (RMSE):** Đo lường sai số trung bình bình phương, với RMSE có cùng đơn vị với biến mục tiêu (USD).
 - **Trực quan hóa:** Sử dụng biểu đồ Scatter Plot để so sánh mức lương thực tế và mức lương do mô hình dự đoán.
-
-#### **3. Triển Khai Công Cụ Tương Tác**
-- **Mục tiêu:** Tạo ra một giao diện đơn giản cho phép người dùng nhập thông tin về công việc và nhận lại mức lương dự đoán.
-- **Công nghệ:** Sử dụng các thư viện như `ipywidgets` để tạo các dropdown, slider cho người dùng cuối tương tác trực tiếp trên notebook.

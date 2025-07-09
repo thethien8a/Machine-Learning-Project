@@ -7,7 +7,7 @@ from utils import load_and_prepare_data
 from feature_engineering import (
     process_skill_features,
     drop_irrelevant_features,
-    create_interaction_features
+    create_polynomial_features
 )
 from data_preprocessing import (
     target_encode_features,
@@ -15,7 +15,7 @@ from data_preprocessing import (
     ohe_encode_features,
     standardize_features
 )
-from model_training import train_xgboost, train_random_forest
+from model_training import train_xgboost_with_fixed_hyperparameters
 from evaluation import evaluate_model, plot_feature_importance
 
 warnings.filterwarnings('ignore')
@@ -48,15 +48,14 @@ def main():
     X_train = X_train.fillna(X_train.median())
     X_test = X_test.fillna(X_test.median())
     
-    X_train = create_interaction_features(X_train)
-    X_test = create_interaction_features(X_test)
+    X_train, X_test = create_polynomial_features(X_train, X_test)
     
     X_train, X_test = standardize_features(X_train, X_test)
 
     # 5. Huan luyen va danh gia mo hinh
-    xgb_model = train_random_forest(X_train, y_train_log)
+    xgb_model = train_xgboost_with_fixed_hyperparameters(X_train, y_train_log)
     
-    print("\n\n--- Danh gia mo hinh Random Forest ---")
+    print("\n\n--- Danh gia mo hinh XGBoost ---")
     print("\nDanh gia tren tap test:")
     evaluate_model(xgb_model, X_test, y_test_log)
     print("\nDanh gia tren tap train:")
