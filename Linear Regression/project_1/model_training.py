@@ -117,7 +117,7 @@ def train_xgboost(X_train, y_train):
 def train_xgboost_with_fixed_hyperparameters(X_train, y_train):
     """Huấn luyện mô hình XGBoost với các tham số cố định tìm được khi chạy trên GG Colab."""
     model = xgb.XGBRegressor(
-        subsample=0.8, n_estimators=800, max_depth=5, learning_rate=0.1, gamma=0.2, colsample_bytree=0.7,
+        subsample=0.9, n_estimators=400, max_depth=10, learning_rate=0.05, gamma=0.2, colsample_bytree=0.9,
         random_state=42, n_jobs=-1
     )
     model.fit(X_train, y_train, verbose=False)

@@ -2,7 +2,9 @@ pandas
 seaborn
 numpy
 matplotlib
-kagglehub
-ipywidgets
+scikit-learn
+xgboost
 plotly
+ipywidgets
+kagglehub
 ipython
