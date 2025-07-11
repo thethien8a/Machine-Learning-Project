@@ -9,18 +9,16 @@ import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
-from sklearn.compose import ColumnTransformer, make_column_selector
+from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer, KNNImputer  # Thêm KNNImputer
-import category_encoders as ce
+from sklearn.impute import SimpleImputer, KNNImputer
 import xgboost as xgb
 
-# Import các transformer tùy chỉnh
 from feature_engineering import (
     SkillFeatureTransformer,
     DropIrrelevantFeatures,
     TargetEncoderWrapper,
-    DateFeatureExtractor  # Thêm DateFeatureExtractor
+    DateFeatureExtractor
 )
 from evaluation import evaluate_model
 
@@ -28,7 +26,6 @@ warnings.filterwarnings('ignore')
 
 def build_and_train_pipeline():
     """Hàm chính để xây dựng pipeline, huấn luyện và lưu model."""
-    # 1. Tải và chia dữ liệu
     print("Đang tải dữ liệu...")
     df = pd.read_csv('ai_job_dataset1.csv')
     X = df.drop('salary_usd', axis=1)
@@ -37,23 +34,29 @@ def build_and_train_pipeline():
     y_log = np.log1p(y)
 
     X_train, X_test, y_train_log, y_test_log = train_test_split(X, y_log, test_size=0.2, random_state=42)
-    y_train_orig = np.expm1(y_train_log)
 
-    print("Định nghĩa các bước của pipeline...")
+    
     # 2. Định nghĩa các nhóm cột
     ordinal_cols = ['experience_level', 'company_size', 'education_required']
-    target_cols = ['employee_residence', 'company_location', 'job_title']
-    ohe_cols = ['employment_type', 'company_industry'] 
     
-    numeric_cols = [
+    target_cols = ['employee_residence', 'company_location', 'job_title']
+    
+    ohe_cols = ['employment_type', 'industry']
+    
+    date_numeric_cols = ['posting_year', 'posting_month', 'posting_day']
+    
+    other_numeric_cols = [
         'remote_ratio', 'years_experience', 'benefits_score', 
-        'top_5_skills_common', 'top_5_skills_highest_salary',
-        'posting_year', 'posting_month', 'posting_day'
+        'top_5_skills_common', 'top_5_skills_highest_salary'
     ]
 
     # 3. Định nghĩa các pipeline con
-    numeric_transformer = Pipeline(steps=[
-        ('imputer', KNNImputer(n_neighbors=5)), # Sửa: Dùng KNNImputer
+    other_numeric_transformer = Pipeline(steps=[
+        ('imputer', SimpleImputer(strategy='median')),
+        ('scaler', StandardScaler())])
+        
+    date_numeric_transformer = Pipeline(steps=[
+        ('imputer', KNNImputer(n_neighbors=5)),
         ('scaler', StandardScaler())])
     
     ordinal_transformer = Pipeline(steps=[
@@ -66,12 +69,12 @@ def build_and_train_pipeline():
         ('imputer', SimpleImputer(strategy='most_frequent')),
         ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))])
         
-    # Sửa lại để sử dụng Wrapper
     target_transformer = TargetEncoderWrapper()
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', numeric_transformer, numeric_cols), # Sửa: dùng danh sách cột số mới
+            ('other_num', other_numeric_transformer, other_numeric_cols),
+            ('date_num', date_numeric_transformer, date_numeric_cols),
             ('ord', ordinal_transformer, ordinal_cols),
             ('ohe', ohe_transformer, ohe_cols),
             ('target', target_transformer, target_cols)
@@ -81,7 +84,7 @@ def build_and_train_pipeline():
 
     # 4. Xây dựng Pipeline chính
     final_pipeline = Pipeline(steps=[
-        ('date_features', DateFeatureExtractor()), # Thêm bước xử lý ngày tháng
+        ('date_features', DateFeatureExtractor()),
         ('skill_features', SkillFeatureTransformer()),
         ('drop_features', DropIrrelevantFeatures()),
         ('preprocessor', preprocessor),
@@ -91,9 +94,8 @@ def build_and_train_pipeline():
         ))
     ])
 
-    # 5. Huấn luyện pipeline - Bây giờ đơn giản hơn
+    # 5. Huấn luyện pipeline
     print("Bắt đầu huấn luyện pipeline hoàn chỉnh...")
-    # fit_params không còn cần thiết nữa
     final_pipeline.fit(X_train, y_train_log)
     print("Đã huấn luyện xong!")
 
@@ -103,10 +105,10 @@ def build_and_train_pipeline():
     print("\n--- Đánh giá trên tập train ---")
     evaluate_model(final_pipeline, X_train, y_train_log)
     
-    # # 7. Lưu pipeline
-    # print("\nĐang lưu pipeline vào file 'salary_prediction_pipeline.joblib'...")
-    # joblib.dump(final_pipeline, 'salary_prediction_pipeline.joblib')
-    # print("Pipeline đã được lưu thành công!")
+    # 7. Lưu pipeline
+    print("\nĐang lưu pipeline vào file 'salary_prediction_pipeline.joblib'...")
+    joblib.dump(final_pipeline, 'salary_prediction_pipeline.joblib')
+    print("Pipeline đã được lưu thành công!")
 
 
 if __name__ == "__main__":
