@@ -8,3 +8,5 @@ plotly
 ipywidgets
 kagglehub
 ipython
+joblib
+category-encoders
