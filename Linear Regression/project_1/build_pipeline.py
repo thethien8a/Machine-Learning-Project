@@ -54,7 +54,7 @@ def build_and_train_pipeline():
     other_numeric_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='median')),
         ('scaler', StandardScaler())])
-        
+    
     date_numeric_transformer = Pipeline(steps=[
         ('imputer', KNNImputer(n_neighbors=5)),
         ('scaler', StandardScaler())])
