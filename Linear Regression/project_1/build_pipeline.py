@@ -46,10 +46,15 @@ def build_and_train_pipeline():
     date_numeric_cols = ['posting_year', 'posting_month', 'posting_day']
     
     other_numeric_cols = [
-        'remote_ratio', 'years_experience', 'benefits_score', 
-        'top_5_skills_common', 'top_5_skills_highest_salary'
+        'remote_ratio', 'years_experience', 'benefits_score'
     ]
-
+    
+    skills_cols = ["top_5_skills_common", "top_5_skills_highest_salary"]
+    
+    skills_transformer = Pipeline(steps=[
+        ('imputer', SimpleImputer(strategy='constant', fill_value=0)),
+        ('scaler', StandardScaler())])
+        
     # 3. Định nghĩa các pipeline con
     other_numeric_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='median')),
@@ -73,6 +78,7 @@ def build_and_train_pipeline():
 
     preprocessor = ColumnTransformer(
         transformers=[
+            ('skills', skills_transformer, skills_cols),
             ('other_num', other_numeric_transformer, other_numeric_cols),
             ('date_num', date_numeric_transformer, date_numeric_cols),
             ('ord', ordinal_transformer, ordinal_cols),
