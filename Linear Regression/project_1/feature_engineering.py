@@ -55,7 +55,14 @@ class SkillFeatureTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X_transformed = X.copy()
-        X_transformed["required_skills"] = X_transformed["required_skills"].str.split(",").apply(lambda x: [word.strip().lower() for word in x] if isinstance(x, list) else [])
+        
+        # Xử lý trường hợp 'required_skills' có thể là None hoặc không phải là chuỗi
+        def safe_split(skills):
+            if isinstance(skills, str):
+                return [word.strip().lower() for word in skills.split(",")]
+            return [] # Trả về danh sách rỗng nếu là None, NaN, hoặc kiểu khác
+
+        X_transformed["required_skills"] = X_transformed["required_skills"].apply(safe_split)
 
         count_common = []
         count_salary = []
