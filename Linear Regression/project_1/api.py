@@ -15,7 +15,7 @@ class JobPredictionRequest(BaseModel):
     company_size: str
     employee_residence: str
     remote_ratio: int
-    required_skills: str
+    required_skills: Optional[str] = None
     education_required: str
     years_experience: int
     industry: Optional[str] = None
@@ -91,7 +91,8 @@ def predict(request: JobPredictionRequest):
         # Chuyển đổi ngược về giá trị lương thực tế
         prediction = np.expm1(log_prediction)
         
-        return {"predicted_salary_usd": round(prediction, 2)}
+        # Sửa lỗi: Chuyển đổi tường minh sang kiểu float của Python
+        return {"predicted_salary_usd": float(round(prediction, 2))}
 
     except Exception as e:
         return {"error": f"An error occurred during prediction: {str(e)}"}, 400 
