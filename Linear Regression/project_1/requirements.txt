@@ -10,3 +10,6 @@ kagglehub
 ipython
 joblib
 category-encoders
+fastapi
+uvicorn[standard]
+python-multipart
