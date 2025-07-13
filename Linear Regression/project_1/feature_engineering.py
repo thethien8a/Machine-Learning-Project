@@ -45,9 +45,13 @@ class SkillFeatureTransformer(BaseEstimator, TransformerMixin):
              skill_data['salary_usd'] = y
 
         temp_skill_data = skill_data.copy()
-        temp_skill_data["required_skills"] = temp_skill_data["required_skills"].fillna("").str.split(", ")
+
+        temp_skill_data["required_skills"] = temp_skill_data["required_skills"].fillna("").str.split(',')
         temp_skill_data = temp_skill_data.explode("required_skills")
         temp_skill_data["required_skills"] = temp_skill_data["required_skills"].str.strip().str.lower()
+        
+        # Loại bỏ các chuỗi rỗng có thể sinh ra sau khi split và explode
+        temp_skill_data = temp_skill_data[temp_skill_data['required_skills'] != '']
         
         self.top_common_skills_ = get_top_5_common_skills_by_job(temp_skill_data)
         self.top_salary_skills_ = get_top_5_highest_salary_skills_by_job(temp_skill_data)
