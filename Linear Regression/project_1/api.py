@@ -11,16 +11,16 @@ class JobPredictionRequest(BaseModel):
     job_title: str
     experience_level: str
     employment_type: str
-    company_location: str
+    company_location: Optional[str] = None
     company_size: str
-    employee_residence: str
+    employee_residence: Optional[str] = None
     remote_ratio: int
     required_skills: Optional[str] = None
     education_required: str
     years_experience: int
     industry: Optional[str] = None
     posting_date: str
-    benefits_score: Optional[float] = None
+    benefits_score: float
 
     class Config:
         schema_extra = {
@@ -52,7 +52,7 @@ app = FastAPI(
 # Cho phép frontend (chạy ở một địa chỉ khác) có thể gọi đến API này.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Thận trọng: Cho phép tất cả các nguồn. Trong sản phẩm thực tế, bạn nên giới hạn lại.
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -83,7 +83,7 @@ def predict(request: JobPredictionRequest):
 
     try:
         # Chuyển dữ liệu từ request Pydantic thành một DataFrame có 1 hàng
-        input_data = pd.DataFrame([request.dict()])
+        input_data = pd.DataFrame([request.model_dump()])
         
         # Dùng pipeline để dự đoán (kết quả ở thang log)
         log_prediction = pipeline.predict(input_data)[0]
@@ -91,7 +91,6 @@ def predict(request: JobPredictionRequest):
         # Chuyển đổi ngược về giá trị lương thực tế
         prediction = np.expm1(log_prediction)
         
-        # Sửa lỗi: Chuyển đổi tường minh sang kiểu float của Python
         return {"predicted_salary_usd": float(round(prediction, 2))}
 
     except Exception as e:
