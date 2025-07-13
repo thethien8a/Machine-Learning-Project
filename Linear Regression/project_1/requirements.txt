@@ -1,12 +1,11 @@
+# Core Data & ML
 pandas
-seaborn
 numpy
-matplotlib
 scikit-learn
 xgboost
-plotly
-ipywidgets
-kagglehub
-ipython
 joblib
 category-encoders
+# API & Server
+fastapi
+uvicorn[standard]
+python-multipart

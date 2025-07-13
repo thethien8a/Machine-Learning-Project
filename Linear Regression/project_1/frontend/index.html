@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Salary Predictor</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">AI/Data Job</span>
+                    <span class="gradient-text">Salary Predictor</span>
+                </h1>
+                <p class="hero-subtitle">Get instant salary estimates powered by machine learning</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-database"></i>
+                        <span>10K+ Jobs Analyzed</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>R² 90%</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-globe"></i>
+                        <span>Global Market</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <form id="prediction-form" class="prediction-form">
+                <!-- Personal Information Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-user-circle section-icon"></i>
+                        <h3 class="section-title">Personal Information</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="job_title">
+                                <i class="fas fa-briefcase"></i>
+                                Job Title
+                            </label>
+                            <select id="job_title" required>
+                                <option value="Data Scientist" selected>Data Scientist</option>
+                                <option value="Head of AI">Head of AI</option>
+                                <option value="Data Engineer">Data Engineer</option>
+                                <option value="Computer Vision Engineer">Computer Vision Engineer</option>
+                                <option value="Robotics Engineer">Robotics Engineer</option>
+                                <option value="AI Consultant">AI Consultant</option>
+                                <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                                <option value="Deep Learning Engineer">Deep Learning Engineer</option>
+                                <option value="Principal Data Scientist">Principal Data Scientist</option>
+                                <option value="AI Product Manager">AI Product Manager</option>
+                                <option value="Machine Learning Researcher">Machine Learning Researcher</option>
+                                <option value="AI Software Engineer">AI Software Engineer</option>
+                                <option value="ML Ops Engineer">ML Ops Engineer</option>
+                                <option value="AI Architect">AI Architect</option>
+                                <option value="AI Specialist">AI Specialist</option>
+                                <option value="Data Analyst">Data Analyst</option>
+                                <option value="Research Scientist">Research Scientist</option>
+                                <option value="Autonomous Systems Engineer">Autonomous Systems Engineer</option>
+                                <option value="NLP Engineer">NLP Engineer</option>
+                                <option value="AI Research Scientist">AI Research Scientist</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience_level">
+                                <i class="fas fa-level-up-alt"></i>
+                                Experience Level
+                            </label>
+                            <select id="experience_level" required>
+                                <option value="EN">Entry-level / Junior</option>
+                                <option value="MI" selected>Mid-level / Intermediate</option>
+                                <option value="SE">Senior-level / Expert</option>
+                                <option value="EX">Executive-level / Director</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="education_required">
+                                <i class="fas fa-graduation-cap"></i>
+                                Education Required
+                            </label>
+                            <select id="education_required" required>
+                                <option value="Associate">Associate</option>
+                                <option value="Bachelor" selected>Bachelor</option>
+                                <option value="Master">Master</option>
+                                <option value="PhD">PhD</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Location & Company Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-building section-icon"></i>
+                        <h3 class="section-title">Location & Company</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="company_location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Company Location
+                            </label>
+                            <select id="company_location">
+                                <option value="" selected>-- Not Specified --</option>
+                                <option value="United States">United States</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Japan">Japan</option>
+                                <option value="France">France</option>
+                                <option value="India">India</option>
+                                <option value="China">China</option>
+                                <option value="South Korea">South Korea</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="company_size">
+                                <i class="fas fa-building"></i>
+                                Company Size
+                            </label>
+                            <select id="company_size" required>
+                                <option value="S">Small (1-50 employees)</option>
+                                <option value="M" selected>Medium (51-500 employees)</option>
+                                <option value="L">Large (500+ employees)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="employee_residence">
+                                <i class="fas fa-home"></i>
+                                Employee Residence
+                            </label>
+                            <select id="employee_residence">
+                                <option value="" selected>-- Not Specified --</option>
+                                <option value="United States">United States</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Japan">Japan</option>
+                                <option value="France">France</option>
+                                <option value="India">India</option>
+                                <option value="China">China</option>
+                                <option value="South Korea">South Korea</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Job Details Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-cogs section-icon"></i>
+                        <h3 class="section-title">Job Details</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="employment_type">
+                                <i class="fas fa-clock"></i>
+                                Employment Type
+                            </label>
+                            <select id="employment_type" required>
+                                <option value="FT" selected>Full-time</option>
+                                <option value="PT">Part-time</option>
+                                <option value="CT">Contract</option>
+                                <option value="FL">Freelance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="industry">
+                                <i class="fas fa-industry"></i>
+                                Industry
+                            </label>
+                            <select id="industry">
+                                <option value="" selected>-- Not Specified --</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Consulting">Consulting</option>
+                                <option value="Education">Education</option>
+                                <option value="Government">Government</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Media">Media</option>
+                                <option value="Energy">Energy</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="remote_ratio">
+                                <i class="fas fa-laptop-house"></i>
+                                Remote Work
+                            </label>
+                            <select id="remote_ratio" required>
+                                <option value="0">On-site (0%)</option>
+                                <option value="50">Hybrid (50%)</option>
+                                <option value="100" selected>Remote (100%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Experience & Skills Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-tools section-icon"></i>
+                        <h3 class="section-title">Experience & Skills</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="years_experience">
+                                <i class="fas fa-calendar-alt"></i>
+                                Years of Experience
+                            </label>
+                            <input type="number" id="years_experience" value="5" min="0" max="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="benefits_score">
+                                <i class="fas fa-star"></i>
+                                Benefits Score (1-10)
+                            </label>
+                            <input type="number" id="benefits_score" value="7.5" step="0.1" min="1" max="10" required>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="required_skills">
+                                <i class="fas fa-code"></i>
+                                Required Skills
+                            </label>
+                            <input type="text" id="required_skills" value="Python, SQL, PyTorch" placeholder="e.g., Python, SQL, Machine Learning">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Posting Information Section -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <i class="fas fa-calendar section-icon"></i>
+                        <h3 class="section-title">Posting Information</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="posting_date">
+                                <i class="fas fa-calendar-day"></i>
+                                Posting Date
+                            </label>
+                            <input type="date" id="posting_date" required>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Submit Button -->
+                <div class="submit-section">
+                    <button type="submit" class="predict-button">
+                        <span class="button-content">
+                            <i class="fas fa-magic"></i>
+                            <span class="button-text">Predict Salary</span>
+                        </span>
+                        <span class="loading-spinner hidden"></span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div id="result-container" class="result-container hidden">
+                <div class="result-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Predicted Salary</h2>
+                </div>
+                <div class="result-content">
+                    <div class="salary-amount">
+                        <span id="result-text">0</span>
+                        <span class="period">USD/year</span>
+                    </div>
+                    <div class="result-info">
+                        <p>Based on current market data and your job specifications</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>Powered by Machine Learning & AI</p>
+                <div class="footer-links">
+                    <span>Made with ❤️ by The Thien</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html> 
