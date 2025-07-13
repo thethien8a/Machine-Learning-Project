@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             years_experience: parseInt(document.getElementById('years_experience').value, 10),
             industry: document.getElementById('industry').value || null,
             posting_date: postingDateInput.value,
-            benefits_score: parseFloat(document.getElementById('benefits_score').value) || null
+            benefits_score: parseFloat(document.getElementById('benefits_score').value)
         };
 
         // 2. Gửi yêu cầu đến API
