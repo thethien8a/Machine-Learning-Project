@@ -73,18 +73,77 @@ Dự án sẽ cung cấp một bộ các dashboards tương tác, mỗi dashboar
 - **So Sánh Với Kế Hoạch:**
     - **Hoàn thành (với sự điều chỉnh):** Nội dung này được phát triển sâu hơn trong quá trình phân tích, thay thế cho kế hoạch ban đầu về Dashboard 3 (chỉ tập trung vào kỹ năng). Nó cung cấp những insight độc đáo về quy trình và giá trị học vấn.
 
-### **Phần 4: Xây Dựng Mô Hình Dự Báo Lương (Salary Prediction Model)**
+---
 
-#### **1. Xây Dựng Mô Hình Hồi quy Tuyến tính**
-- **Mục tiêu:** Xây dựng một mô hình Machine Learning có khả năng dự đoán mức lương (`salary_usd`) dựa trên các thuộc tính của công việc.
-- **Phương pháp:**
-  - **Tiền xử lý:** Sử dụng kỹ thuật One-Hot Encoding để chuyển đổi các biến phân loại (categorical) thành dạng số mà mô hình có thể hiểu được.
-  - **Huấn luyện:** Chia dữ liệu thành tập huấn luyện và tập kiểm tra, sau đó huấn luyện mô hình Hồi quy Tuyến tính (`Linear Regression`).
+## 4. Mô hình Dự báo và Ứng dụng Web
 
-#### **2. Đánh Giá Hiệu Suất Mô Hình**
-- **Mục tiêu:** Đo lường độ chính xác và mức độ hiệu quả của mô hình dự báo.
-- **Các chỉ số đánh giá:**
-  - **R-squared (R²):** Tỷ lệ phương sai trong biến phụ thuộc (lương) có thể được dự đoán từ các biến độc lập.
-  - **Mean Absolute Error (MAE):** Sai số tuyệt đối trung bình - cho biết trung bình mô hình dự đoán sai lệch bao nhiêu USD.
-  - **Mean Squared Error (MSE) & Root Mean Squared Error (RMSE):** Đo lường sai số trung bình bình phương, với RMSE có cùng đơn vị với biến mục tiêu (USD).
-- **Trực quan hóa:** Sử dụng biểu đồ Scatter Plot để so sánh mức lương thực tế và mức lương do mô hình dự đoán.
+### Giới thiệu dự án
+
+Thay vì chỉ dừng lại ở việc phân tích, dự án đã được phát triển thành một sản phẩm hoàn chỉnh: một **ứng dụng web dự đoán lương**. Mục tiêu là cung cấp một công cụ tương tác, cho phép người dùng nhập thông tin chi tiết về một công việc và nhận lại mức lương dự đoán gần như ngay lập tức.
+
+Sản phẩm cuối cùng bao gồm hai thành phần chính:
+-   **Backend API:** Một dịch vụ web mạnh mẽ được xây dựng bằng **FastAPI**, chịu trách nhiệm thực hiện các dự đoán.
+-   **Frontend:** Một giao diện người dùng đơn giản, trực quan được xây dựng bằng **HTML, CSS, và JavaScript**.
+
+### Miêu tả dự án
+
+Kiến trúc của dự án đã được tái cấu trúc hoàn toàn để phục vụ cho việc triển khai và sử dụng trong thực tế.
+
+#### **A. Pipeline Xử lý Dữ liệu và Huấn luyện (Backend)**
+
+Trái tim của dự án là một **`scikit-learn Pipeline`** được đóng gói và lưu vào tệp `salary_prediction_pipeline.joblib`. Pipeline này là một dây chuyền tự động, thực hiện toàn bộ các bước từ xử lý dữ liệu thô đến đưa ra dự đoán.
+
+**Các bước chính trong Pipeline:**
+1.  **Xử lý Ngày tháng (`DateFeatureExtractor`):** Tự động tách cột `posting_date` thành các đặc trưng ngày, tháng, năm và xử lý các giá trị thiếu bằng `KNNImputer`.
+2.  **Kỹ thuật Đặc trưng Kỹ năng (`SkillFeatureTransformer`):** Phân tích chuỗi `required_skills`, đếm số lượng kỹ năng nằm trong top phổ biến và top lương cao (đã học được từ dữ liệu huấn luyện).
+3.  **Tiền xử lý song song (`ColumnTransformer`):** Áp dụng các phép biến đổi phù hợp cho từng nhóm cột:
+    -   **Encoding:** Sử dụng `TargetEncoder` cho các cột có nhiều danh mục (như `job_title`), `OneHotEncoder` và `OrdinalEncoder` cho các cột còn lại.
+    -   **Imputation:** Điền các giá trị thiếu bằng `SimpleImputer` (chiến lược `median` hoặc `most_frequent`).
+    -   **Scaling:** Chuẩn hóa các đặc trưng số bằng `StandardScaler`.
+4.  **Mô hình Dự báo:** Sử dụng một mô hình `XGBRegressor` đã được tinh chỉnh để đưa ra dự đoán cuối cùng.
+
+Toàn bộ logic này được định nghĩa trong `build_pipeline.py` và `feature_engineering.py`.
+
+#### **B. API Server (Backend)**
+
+Dịch vụ API được xây dựng bằng **FastAPI** trong tệp `api.py`.
+-   **Xác thực đầu vào:** Sử dụng **Pydantic** để định nghĩa một `schema` nghiêm ngặt, đảm bảo dữ liệu người dùng gửi lên luôn đúng định dạng. API cũng được thiết kế để chấp nhận một vài trường có thể để trống (ví dụ: `required_skills`, `industry`).
+-   **Endpoint `/predict`:** Nhận dữ liệu JSON từ người dùng, chuyển đổi nó thành một `DataFrame`, đưa vào pipeline đã tải và trả về kết quả dự đoán.
+-   **Hiệu năng:** Pipeline `.joblib` chỉ được tải một lần duy nhất khi API khởi động, đảm bảo thời gian phản hồi cho các dự đoán là nhanh nhất.
+
+#### **C. Giao diện Người dùng (Frontend)**
+
+Một giao diện web đơn giản được đặt trong thư mục `/frontend`, bao gồm:
+-   `index.html`: Cung cấp form nhập liệu cho người dùng.
+-   `styles.css`: Tạo kiểu dáng hiện đại, dễ sử dụng.
+-   `script.js`: "Bộ não" của frontend, chịu trách nhiệm thu thập dữ liệu từ form, gọi đến Backend API bằng `fetch`, nhận kết quả và hiển thị cho người dùng.
+
+### Cách sử dụng
+
+Để chạy toàn bộ ứng dụng, bạn cần thực hiện các bước sau:
+
+#### **1. Chuẩn bị Môi trường**
+Mở terminal và cài đặt tất cả các thư viện cần thiết:
+```bash
+pip install -r requirements.txt
+```
+
+#### **2. Xây dựng "Bộ não" (Chỉ chạy một lần)**
+Nếu tệp `salary_prediction_pipeline.joblib` chưa tồn tại, hãy chạy kịch bản sau để huấn luyện và lưu lại pipeline:
+```bash
+python build_pipeline.py
+```
+*Lưu ý: Bước này có thể mất một vài phút.*
+
+#### **3. Chạy Backend API**
+Trong terminal, khởi động máy chủ API:
+```bash
+uvicorn api:app --reload
+```
+Để cửa sổ terminal này chạy. API của bạn giờ đang hoạt động tại `http://127.0.0.1:8000`.
+
+#### **4. Chạy Frontend**
+1.  Mở File Explorer và điều hướng đến thư mục `frontend` của dự án.
+2.  Nháy đúp chuột vào tệp `index.html` để mở nó bằng trình duyệt web.
+
+Bây giờ bạn có thể nhập thông tin vào form trên trang web và nhấn "Predict Salary" để nhận kết quả từ mô hình của mình.
