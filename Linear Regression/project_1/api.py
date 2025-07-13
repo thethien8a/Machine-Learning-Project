@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
@@ -43,10 +44,21 @@ class JobPredictionRequest(BaseModel):
 
 # 2. Khởi tạo ứng dụng FastAPI
 app = FastAPI(
-    title="Salary Prediction API",
-    description="An API to predict job salaries based on input features in job description",
+    title="AI/Data Job Salary Predictor API",
+    description="An API to predict job salaries based on input features in job description upload by HR",
     version="1.0.0"
 )
+
+# --- SERVE FRONTEND ---
+# Mount thư mục 'frontend' để phục vụ các file tĩnh (CSS, JS)
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+# Endpoint để phục vụ file index.html
+@app.get("/", include_in_schema=False)
+async def serve_index():
+    with open("frontend/index.html", "r") as f:
+        html_content = f.read()
+    return Response(content=html_content, media_type="text/html")
 
 # 3. Bật CORS (Cross-Origin Resource Sharing)
 # Cho phép frontend (chạy ở một địa chỉ khác) có thể gọi đến API này.
@@ -68,11 +80,6 @@ except FileNotFoundError:
     pipeline = None
 
 # 5. Tạo các endpoints
-@app.get("/", tags=["Health Check"])
-def read_root():
-    """Endpoint gốc để kiểm tra xem API có đang hoạt động không."""
-    return {"status": "ok", "message": "Salary Prediction API is running."}
-
 @app.post("/predict", tags=["Prediction"])
 def predict(request: JobPredictionRequest):
     """
